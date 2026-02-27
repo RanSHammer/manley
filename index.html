@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MANLEY</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Inter:wght@300;400;600&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  /* Animated background grid */
+  .bg-grid {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: 
+      linear-gradient(rgba(255,165,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,165,0,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+  }
+  .bg-glow {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,140,0,0.08), transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    animation: pulseGlow 4s ease infinite;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  }
+
+  .container {
+    text-align: center;
+    padding: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Landing */
+  .landing { animation: fadeIn 1s ease; }
+  .brand {
+    font-family: 'Oswald', sans-serif;
+    font-size: 5rem;
+    font-weight: 700;
+    letter-spacing: 18px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #ff8c00, #ffa500, #ffcc00, #ff8c00);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+    margin-bottom: 10px;
+  }
+  @keyframes shimmer {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+  .tagline {
+    font-size: 0.95rem;
+    font-weight: 300;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: rgba(255,165,0,0.4);
+    margin-bottom: 50px;
+  }
+  .divider {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #ff8c00, transparent);
+    margin: 0 auto 50px;
+  }
+  .btn {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 20px 60px;
+    border: 2px solid rgba(255,140,0,0.5);
+    border-radius: 0;
+    background: transparent;
+    color: #ffa500;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,140,0,0.15), transparent);
+    transition: left 0.5s;
+  }
+  .btn:hover::before { left: 100%; }
+  .btn:hover {
+    border-color: #ffa500;
+    box-shadow: 0 0 40px rgba(255,140,0,0.2), inset 0 0 40px rgba(255,140,0,0.05);
+    transform: translateY(-2px);
+  }
+
+  /* Checklist */
+  .checklist {
+    display: none;
+    animation: fadeInUp 0.8s ease forwards;
+  }
+  .checklist.show { display: block; }
+  .checklist .brand-small {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 12px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #ff8c00, #ffcc00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 15px;
+  }
+  .checklist .subtitle {
+    font-size: 0.85rem;
+    font-weight: 300;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: rgba(255,165,0,0.35);
+    margin-bottom: 45px;
+  }
+  .items {
+    list-style: none;
+    text-align: left;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .items li {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 0;
+    border-bottom: 1px solid rgba(255,165,0,0.08);
+    opacity: 0;
+    transform: translateX(-30px);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .items li:hover {
+    padding-left: 8px;
+  }
+  .items li.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .items li.checked .check-box {
+    background: linear-gradient(135deg, #ff8c00, #ffcc00);
+    border-color: #ff8c00;
+  }
+  .items li.checked .check-box::after {
+    content: '✓';
+    color: #0a0a0a;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .items li.checked .item-text {
+    color: rgba(255,165,0,0.35);
+    text-decoration: line-through;
+  }
+  .check-box {
+    width: 32px; height: 32px;
+    min-width: 32px;
+    border: 2px solid rgba(255,140,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  .num {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: rgba(255,140,0,0.3);
+    min-width: 25px;
+  }
+  .item-text {
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: #e0e0e0;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+  }
+  .items li:last-child { border-bottom: none; }
+
+  .footer {
+    margin-top: 50px;
+    font-size: 0.7rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(255,165,0,0.15);
+  }
+
+  .hidden { display: none; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="container">
+  <div class="landing" id="landing">
+    <div class="brand">Manley</div>
+    <div class="tagline">The Playbook</div>
+    <div class="divider"></div>
+    <button class="btn" onclick="reveal()">How To Make It</button>
+  </div>
+
+  <div class="checklist" id="checklist">
+    <div class="brand-small">Manley</div>
+    <div class="subtitle">The Blueprint</div>
+    <ul class="items" id="items">
+      <li onclick="this.classList.toggle('checked')">
+        <div class="check-box"></div>
+        <span class="num">01</span>
+        <span class="item-text">Buy BTC</span>
+      </li>
+      <li onclick="this.classList.toggle('checked')">
+        <div class="check-box"></div>
+        <span class="num">02</span>
+        <span class="item-text">Embrace AI</span>
+      </li>
+      <li onclick="this.classList.toggle('checked')">
+        <div class="check-box"></div>
+        <span class="num">03</span>
+        <span class="item-text">Get in Shape</span>
+      </li>
+      <li onclick="this.classList.toggle('checked')">
+        <div class="check-box"></div>
+        <span class="num">04</span>
+        <span class="item-text">Take Care of Fam</span>
+      </li>
+    </ul>
+    <div class="footer">No Shortcuts</div>
+  </div>
+</div>
+
+<script>
+function reveal() {
+  document.getElementById('landing').classList.add('hidden');
+  const cl = document.getElementById('checklist');
+  cl.classList.add('show');
+  
+  const items = document.querySelectorAll('.items li');
+  items.forEach((item, i) => {
+    setTimeout(() => {
+      item.classList.add('visible');
+    }, 300 + i * 250);
+  });
+}
+</script>
+</body>
+</html>
